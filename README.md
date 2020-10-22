@@ -1,5 +1,7 @@
 # FLUSH+RELOAD
 
+### 不使用GPG，而是自己写的简单程序
+
 ## Notice
 
 This project is unmaintained and somewhat outdated now. We may continue to
