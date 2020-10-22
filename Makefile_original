@@ -1,0 +1,67 @@
+SRC=src  #允许使用等号自定义变量  调用时，变量需要放在 $( ) 之中
+IDIR=$(SRC)/include
+CC=gcc
+CFLAGS= -g#-Wall -I$(IDIR) -g --std=gnu99
+
+ODIR=obj
+
+_DEPS=args.h
+DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS)) #patsubst 函数用于模式匹配的替换   ,
+#下面的例子将文件名"x.c.c bar.c"，替换成"x.c.o bar.o"。
+#$(patsubst %.c,%.o,x.c.c bar.c)
+
+_OBJ=args.o probe.o
+OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
+
+
+
+BDIR=bin
+
+#prerequisites中如果有一个以上的文件比target文件要新的话，command所定义的命令就会被执行。
+
+all: probe  #想要完成all就要先完成probe
+
+
+probe: $(OBJ)  #前置条件通常是一组文件名，之间用空格分隔。它指定了"目标"是否重新构建的判断标准：
+	mkdir -p $(BDIR)  
+	$(CC) $(CFLAGS) -o $(BDIR)/$@ $^    
+
+#$@指代当前目标 $@=probe
+#$^ 指代所有前置条件，之间以空格分隔
+#命令（commands）表示如何更新目标文件，由一行或多行的Shell命令组成。
+#它是构建"目标"的具体指令，它的运行结果通常就是生成目标文件。
+
+$(ODIR)/%.o: $(SRC)/%.c $(DEPS)
+	mkdir -p obj
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+
+#$< 指代第一个前置条件  
+
+#下面这些都不会执行，默认执行第一个
+
+measure_l1: $(SRC)/measure_l1.c
+	mkdir -p $(BDIR)
+	$(CC) $(CFLAGS) -o $(BDIR)/$@ $?
+
+#$? 指代比目标更新的所有前置条件，之间以空格分隔。
+
+timings: $(ODIR)/args.o $(ODIR)/timings.o
+	mkdir -p $(BDIR)
+	$(CC) $(CFLAGS) -o $(BDIR)/$@ $^
+
+run: probe
+	- rm message.txt.gpg 2>/dev/null
+	$(BDIR)/probe $(GPG) $(ADDR) out.txt $(CYCLES) && python graph.py &
+	sleep 0.01
+	$(GPG) --sign message.txt
+
+noise: probe
+	$(BDIR)/probe $(GPG) $(ADDR) out.txt $(CYCLES) && python graph.py &
+
+.PHONY: clean  #明确声明clean是"伪目标",不会因为存在clean文件，而不执行
+
+clean: #是一个操作的名字，属于"伪目标 " 其冒号后什么也没有，那么，make就不会自动去找它的依赖性，也就不会自动执行其后所定义的命令
+	rm -f $(ODIR)/*.o $(BDIR)/*
+	rm -rf *.dSYM
+#*.o 表示所有后缀名为o的文件。

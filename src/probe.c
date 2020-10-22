@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
 
     // memory map so we can force OS to share this memory page with GPG process
     size_t map_len = GPG_MAX_SIZE_BYTES;
-    void *gpg_base = mmap(NULL, map_len, PROT_READ, MAP_FILE | MAP_SHARED,
+    void *gpg_base = mmap(NULL, map_len, PROT_READ,  MAP_SHARED,
             arguments.gpg_fd, 0);
     if (gpg_base == MAP_FAILED) {
         perror("mmap");

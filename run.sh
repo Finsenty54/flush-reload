@@ -4,11 +4,11 @@ set -o errexit
 set -o xtrace
 set -o nounset
 
-GPG=$HOME/gnupg-1.4.12/bin/gpg
+GPG=./testapp
 ADDR=docs/addr/osx.txt
 MESSAGE=message.txt
 OUT=out.txt
-CYCLES=$1
+CYCLES=1
 
 bin/probe "${GPG}" ${ADDR} ${OUT} "${CYCLES}" &
 PROBE_PID=$!
@@ -23,7 +23,7 @@ trap "echo 'Received signal'; kill -TERM ${PROBE_PID} ${GPG_PID}" \
 wait ${PROBE_PID}
 wait ${GPG_PID}
 
-python graph.py &
+python3 src/graph.py &
 GRAPH_PID=$!
 
 trap "echo 'Killing python'; kill -TERM ${GRAPH_PID}" INT QUIT

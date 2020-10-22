@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//#ifndef __FLUSH_RELOAD_ARGS_H__
 #include "args.h"
-
+//#endif
 /** Read arguments into the args_st struct. */
 bool read_args(struct args_st *arguments, int argc, char *argv[]) {
     if (argc != 5) {

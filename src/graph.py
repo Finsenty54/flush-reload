@@ -16,7 +16,7 @@ red = {'label': 'Reduce', 'marker': '.', 'color': '#2C00E8', 'addrs': [1]}
 mult = {'label': 'Multiply', 'marker': '^', 'color': '#00F1FF', 'addrs': [2]}
 hit_types = [square, red, mult]
 
-with open(inputfile, 'rb') as outfile:
+with open(inputfile, 'rt') as outfile:
     probereader = csv.reader(outfile, delimiter=' ')
     rows = [Hit(slot=int(row[0]), addr=int(row[1]), time=int(row[2]))
             for row in probereader]
@@ -42,7 +42,7 @@ with open(inputfile, 'rb') as outfile:
         slots_to_multiplies[multiply.slot] = multiply
     multiply_slots = sorted(slots_to_multiplies.keys())
     dists = {}
-    for i in xrange(0, len(multiply_slots) - 1):
+    for i in range(0, len(multiply_slots) - 1):
         dist = multiply_slots[i + 1] - multiply_slots[i]
         if dist not in dists:
             dists[dist] = 0
