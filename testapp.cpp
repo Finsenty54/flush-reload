@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 using namespace std;
+//test ssh
 int main()
 {
     string str="100101110";
